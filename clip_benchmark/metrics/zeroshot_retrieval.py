@@ -3,7 +3,7 @@ from contextlib import suppress
 import torch
 from tqdm import tqdm
 
-def evaluate(vision_encoder, text_encoder, dataloader, tokenizer,  device, amp=True, recall_k_list=[5]):
+def evaluate(image_encoder, text_encoder, dataloader, tokenizer,  device, amp=True, recall_k_list=[5]):
     """
     Evaluate the model on the given dataset
 
@@ -52,7 +52,7 @@ def evaluate(vision_encoder, text_encoder, dataloader, tokenizer,  device, amp=T
 
         # compute the embedding of images and texts
         with torch.no_grad(), autocast():
-            batch_images_emb = vision_encoder(batch_images) # note encoder has wrapped the normalize func
+            batch_images_emb = image_encoder(batch_images) # note encoder has wrapped the normalize func
             batch_texts_emb = text_encoder(batch_texts_tok)
             # batch_images_emb = F.normalize(model.encode_image(batch_images), dim=-1)
             # batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok), dim=-1)
