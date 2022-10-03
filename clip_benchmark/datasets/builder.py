@@ -174,7 +174,7 @@ def build_dataset(dataset_name, root="root", transform=None, split="test", downl
             call(f"unzip flickr8k.zip", shell=True)
             call(f"mv Images {root}", shell=True)
             call(f"mv captions.txt {root}", shell=True)
-        if not os.path.exists(annotation_file):
+        if not annotation_file or not os.path.exists(annotation_file):
             # Download Flickr8K Karpathy test set
             annotation_file = f"{root}/flickr8k_test_karpathy.txt"
             call(f"wget https://gist.githubusercontent.com/mehdidc/0745a72acb12d3fc9bf91bda65e1ebb6/raw/6d1d31f8da09310f775905e9ea89aa42d0739f22/flickr8k_test_karpathy.txt --output-document={annotation_file}", shell=True)

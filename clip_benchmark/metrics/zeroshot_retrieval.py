@@ -1,19 +1,21 @@
-import logging
 from contextlib import suppress
 
 import torch
-import torch.nn.functional as F
 from tqdm import tqdm
 
-def evaluate(model, dataloader, tokenizer,  device, amp=True, recall_k_list=[5]):
+def evaluate(vision_encoder, text_encoder, dataloader, tokenizer,  device, amp=True, recall_k_list=[5]):
     """
     Evaluate the model on the given dataset
 
     Parameters
     ----------
     
-    model: torch.nn,Module
-        CLIP-like model with `encode_image` and `encode_text`
+    vision_encoder: torch.nn.Module
+        Fine-tuned CLIP Vision Encoder from finetuner
+    text_encoder: torch.nn.Module
+        Fine-tuned CLIP Text Encoder from finetuner
+    # model: torch.nn,Module
+    #     CLIP-like model with `encode_image` and `encode_text`
     
     dataloader: torch.utils.data.Dataloader
         dataloader to use for evaluation
@@ -50,8 +52,10 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True, recall_k_list=[5])
 
         # compute the embedding of images and texts
         with torch.no_grad(), autocast():
-            batch_images_emb = F.normalize(model.encode_image(batch_images), dim=-1)
-            batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok), dim=-1)
+            batch_images_emb = vision_encoder(batch_images) # note encoder has wrapped the normalize func
+            batch_texts_emb = text_encoder(batch_texts_tok)
+            # batch_images_emb = F.normalize(model.encode_image(batch_images), dim=-1)
+            # batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok), dim=-1)
 
         batch_images_emb_list.append(batch_images_emb.cpu())
         batch_texts_emb_list.append(batch_texts_emb.cpu())
